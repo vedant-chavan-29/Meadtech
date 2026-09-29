@@ -5,7 +5,12 @@ import json
 import functools
 import os
 
-app = Flask(__name__)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+app = Flask(
+    __name__,
+    template_folder=os.path.join(BASE_DIR, 'templates'),
+    static_folder=os.path.join(BASE_DIR, 'static')
+)
 app.secret_key = os.environ.get('SECRET_KEY', 'medtrack_cloud_secret_key_2026_super_secure!')
 
 # ==========================================
