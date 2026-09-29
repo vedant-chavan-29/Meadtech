@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}About MedTrack Cloud Healthcare System{% endblock %}
+
+{% block content %}
+<div class="card" style="padding: 3rem; margin-bottom: 2rem;">
+    <div style="max-width: 800px;">
+        <span class="role-badge role-Doctor" style="font-size: 0.8rem; margin-bottom: 1rem; inline-block;">Cloud Architecture Overview</span>
+        <h1 style="font-size: 2.2rem; font-weight: 800; color: var(--text-main); margin-bottom: 1rem;">
+            About MedTrack Platform
+        </h1>
+        <p style="font-size: 1.05rem; color: var(--text-muted); line-height: 1.7; margin-bottom: 1.5rem;">
+            MedTrack is a cloud-based healthcare management system that streamlines patient-doctor interactions by providing a centralized platform for booking appointments, managing medical histories, and enabling diagnosis submissions.
+        </p>
+
+        <h3 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 1rem; color: var(--text-main);">
+            Key AWS Infrastructure Capabilities
+        </h3>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem; margin-bottom: 2rem;">
+            <div style="background: #f8fafc; border: 1px solid var(--border-color); padding: 1.25rem; border-radius: var(--radius-md);">
+                <i class="fa-brands fa-aws" style="font-size: 1.8rem; color: #f59e0b; margin-bottom: 0.5rem;"></i>
+                <h4 style="font-weight: 700; font-size: 1rem; margin-bottom: 0.25rem;">AWS EC2 & Nginx</h4>
+                <p style="font-size: 0.88rem; color: var(--text-muted);">Scalable production hosting handling high request volumes seamlessly without latency.</p>
+            </div>
+
+            <div style="background: #f8fafc; border: 1px solid var(--border-color); padding: 1.25rem; border-radius: var(--radius-md);">
+                <i class="fa-solid fa-database" style="font-size: 1.8rem; color: #0284c7; margin-bottom: 0.5rem;"></i>
+                <h4 style="font-weight: 700; font-size: 1rem; margin-bottom: 0.25rem;">Amazon DynamoDB</h4>
+                <p style="font-size: 0.88rem; color: var(--text-muted);">NoSQL key-value database storing PatientID, DoctorID, AppointmentID, and Diagnosis records.</p>
+            </div>
+
+            <div style="background: #f8fafc; border: 1px solid var(--border-color); padding: 1.25rem; border-radius: var(--radius-md);">
+                <i class="fa-solid fa-shield-halved" style="font-size: 1.8rem; color: #10b981; margin-bottom: 0.5rem;"></i>
+                <h4 style="font-weight: 700; font-size: 1rem; margin-bottom: 0.25rem;">AWS IAM Governance</h4>
+                <p style="font-size: 0.88rem; color: var(--text-muted);">Role-based access control protecting sensitive health records with strict policy enforcement.</p>
+            </div>
+
+            <div style="background: #f8fafc; border: 1px solid var(--border-color); padding: 1.25rem; border-radius: var(--radius-md);">
+                <i class="fa-solid fa-bell" style="font-size: 1.8rem; color: #ec4899; margin-bottom: 0.5rem;"></i>
+                <h4 style="font-weight: 700; font-size: 1rem; margin-bottom: 0.25rem;">Amazon SNS Alerts</h4>
+                <p style="font-size: 0.88rem; color: var(--text-muted);">Instant SMS & Email notifications triggered automatically upon appointment updates.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

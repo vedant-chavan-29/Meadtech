@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}Log In - MedTrack Cloud Healthcare System{% endblock %}
+
+{% block content %}
+<div style="max-width: 440px; margin: 2rem auto;">
+    <div class="card" style="padding: 2.25rem;">
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <div class="brand-icon" style="margin: 0 auto 1rem; width: 48px; height: 48px; font-size: 1.4rem;">
+                <i class="fa-solid fa-lock"></i>
+            </div>
+            <h2 style="font-size: 1.6rem; font-weight: 800; color: var(--text-main);">Welcome Back</h2>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.25rem;">
+                Log in to access your MedTrack healthcare portal
+            </p>
+        </div>
+
+        <form action="{{ url_for('login') }}" method="POST">
+            <div class="form-group">
+                <label for="email" class="form-label"><i class="fa-solid fa-envelope" style="color: var(--primary);"></i> Email Address</label>
+                <input type="email" id="email" name="email" class="form-control" placeholder="e.g. john.doe@example.com" required autofocus>
+            </div>
+
+            <div class="form-group">
+                <label for="password" class="form-label"><i class="fa-solid fa-key" style="color: var(--primary);"></i> Password</label>
+                <input type="password" id="password" name="password" class="form-control" placeholder="••••••••" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.85rem; margin-top: 1rem; font-size: 1rem;">
+                <i class="fa-solid fa-right-to-bracket"></i> Sign In
+            </button>
+        </form>
+
+        <div style="margin-top: 1.75rem; padding-top: 1.25rem; border-top: 1px solid var(--border-color); text-align: center; font-size: 0.9rem;">
+            Don't have an account? <a href="{{ url_for('signup') }}" style="color: var(--primary); font-weight: 700;">Create an Account</a>
+        </div>
+    </div>
+
+    <!-- Quick Demo Logins Helper -->
+    <div style="background: white; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.25rem; margin-top: 1rem;">
+        <h4 style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.75rem;">
+            <i class="fa-solid fa-bolt" style="color: #f59e0b;"></i> Quick Demo Credentials:
+        </h4>
+        <div style="display: flex; flex-direction: column; gap: 6px; font-size: 0.82rem; color: var(--text-main);">
+            <div><strong>Patient Demo:</strong> <code>john.doe@example.com</code> / <code>patient123</code></div>
+            <div><strong>Doctor Demo:</strong> <code>dr.jenkins@medtrack.com</code> / <code>doctor123</code></div>
+            <div><strong>Admin Demo:</strong> <code>admin@medtrack.com</code> / <code>admin123</code></div>
+        </div>
+    </div>
+</div>
+{% endblock %}

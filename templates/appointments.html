@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block title %}Appointments Management - MedTrack{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+    <div>
+        <h1 style="font-size: 1.9rem; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px;">
+            <i class="fa-solid fa-calendar-check" style="color: var(--primary);"></i> Appointments Schedule
+        </h1>
+        <p style="color: var(--text-muted); font-size: 0.95rem;">
+            Real-time appointment schedule and consultation tracking
+        </p>
+    </div>
+    {% if session['user']['role'] == 'Patient' %}
+        <a href="{{ url_for('booking_page') }}" class="btn btn-primary">
+            <i class="fa-solid fa-plus"></i> Schedule New Visit
+        </a>
+    {% endif %}
+</div>
+
+<!-- FILTER TABS & SEARCH -->
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+        <button class="btn btn-sm btn-outline appointment-filter-btn active" data-filter="all">All Appointments</button>
+        <button class="btn btn-sm btn-outline appointment-filter-btn" data-filter="pending">Pending</button>
+        <button class="btn btn-sm btn-outline appointment-filter-btn" data-filter="confirmed">Confirmed</button>
+        <button class="btn btn-sm btn-outline appointment-filter-btn" data-filter="completed">Completed</button>
+    </div>
+    <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="appointment-search-input" class="form-control" placeholder="Search doctor, patient, or appt ID...">
+    </div>
+</div>
+
+<div class="card">
+    {% if appointments %}
+        <div class="table-responsive">
+            <table class="table" id="all-appointments-table">
+                <thead>
+                    <tr>
+                        <th>Booking ID</th>
+                        <th>Patient</th>
+                        <th>Doctor & Field</th>
+                        <th>Date & Time</th>
+                        <th>Status</th>
+                        <th>Reason</th>
+                        {% if session['user']['role'] in ['Doctor', 'Admin'] %}
+                            <th>Actions</th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for appt in appointments %}
+                        <tr class="appointment-row" data-status="{{ appt.status.lower() }}">
+                            <td>
+                                <strong class="font-mono">{{ appt.appointment_id }}</strong>
+                                <div style="font-size: 0.75rem; color: var(--text-muted);">#{{ appt.booking_id }}</div>
+                            </td>
+                            <td>
+                                <div style="font-weight: 700; color: var(--text-main);">{{ appt.patient_name }}</div>
+                                <div style="font-size: 0.78rem; color: var(--text-muted);">ID: <span class="font-mono">{{ appt.patient_id }}</span></div>
+                            </td>
+                            <td>
+                                <div style="font-weight: 700; color: var(--text-main);">{{ appt.doctor_name }}</div>
+                                <div style="font-size: 0.78rem; color: var(--primary-dark); font-weight: 600;">{{ appt.specialization }}</div>
+                            </td>
+                            <td>
+                                <div><i class="fa-regular fa-calendar" style="color: var(--primary);"></i> {{ appt.date }}</div>
+                                <div style="font-size: 0.8rem; color: var(--text-muted);"><i class="fa-regular fa-clock"></i> {{ appt.time }}</div>
+                            </td>
+                            <td>
+                                <span class="status-badge status-{{ appt.status }}">
+                                    <i class="fa-solid fa-circle" style="font-size: 0.45rem;"></i> {{ appt.status }}
+                                </span>
+                            </td>
+                            <td style="font-size: 0.88rem; color: var(--text-muted); max-width: 200px;">
+                                {{ appt.reason }}
+                            </td>
+
+                            {% if session['user']['role'] in ['Doctor', 'Admin'] %}
+                                <td>
+                                    <div style="display: flex; gap: 8px;">
+                                        {% if appt.status == 'Pending' %}
+                                            <form action="{{ url_for('update_appointment_status', booking_id=appt.booking_id) }}" method="POST" style="display:inline;">
+                                                <input type="hidden" name="status" value="Confirmed">
+                                                <button type="submit" class="btn btn-sm btn-primary" title="Confirm Booking">
+                                                    <i class="fa-solid fa-check"></i>
+                                                </button>
+                                            </form>
+                                        {% endif %}
+
+                                        {% if appt.status in ['Confirmed', 'Pending'] %}
+                                            <form action="{{ url_for('update_appointment_status', booking_id=appt.booking_id) }}" method="POST" style="display:inline;">
+                                                <input type="hidden" name="status" value="Cancelled">
+                                                <button type="submit" class="btn btn-sm btn-outline" style="color: var(--danger); border-color: #fecaca;" title="Cancel Booking">
+                                                    <i class="fa-solid fa-xmark"></i>
+                                                </button>
+                                            </form>
+                                            <a href="{{ url_for('submit_diagnosis', appointment_id=appt.appointment_id) }}" class="btn btn-sm btn-outline" style="background: #e0f2fe; color: #0369a1; border-color: #bae6fd;" title="Publish Diagnosis">
+                                                <i class="fa-solid fa-stethoscope"></i> Report
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div style="text-align: center; padding: 3rem; color: var(--text-muted);">
+            <i class="fa-solid fa-folder-open" style="font-size: 3rem; color: #cbd5e1; margin-bottom: 1rem;"></i>
+            <p>No appointments found in database.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

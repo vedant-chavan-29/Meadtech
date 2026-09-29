@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+
+{% block title %}Patient Portal - MedTrack{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+    <div>
+        <h1 style="font-size: 1.9rem; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px;">
+            <i class="fa-solid fa-hospital-user" style="color: var(--primary);"></i> Patient Health Portal
+        </h1>
+        <p style="color: var(--text-muted); font-size: 0.95rem;">
+            Welcome back, <strong>{{ user.name }}</strong>! Manage consultations, review DynamoDB diagnosis records, and check alerts.
+        </p>
+    </div>
+    <a href="{{ url_for('booking_page') }}" class="btn btn-primary">
+        <i class="fa-solid fa-calendar-plus"></i> Book New Consultation
+    </a>
+</div>
+
+<!-- PATIENT SUMMARY STATS -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon"><i class="fa-solid fa-calendar-check"></i></div>
+        <div>
+            <div class="stat-val">{{ appointments|length }}</div>
+            <div class="stat-lbl">Scheduled Visits</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon" style="background: #e0f2fe; color: #0284c7;"><i class="fa-solid fa-notes-medical"></i></div>
+        <div>
+            <div class="stat-val">{{ diagnoses|length }}</div>
+            <div class="stat-lbl">Diagnosis Records</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon" style="background: #fef3c7; color: #92400e;"><i class="fa-solid fa-bell"></i></div>
+        <div>
+            <div class="stat-val">{{ notifications|length }}</div>
+            <div class="stat-lbl">AWS SNS Alerts</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon" style="background: #dcfce7; color: #166534;"><i class="fa-solid fa-heart-pulse"></i></div>
+        <div>
+            <div class="stat-val">120/80</div>
+            <div class="stat-lbl">Latest Vitals (BP)</div>
+        </div>
+    </div>
+</div>
+
+<div style="display: grid; grid-template-columns: 2.2fr 1fr; gap: 1.5rem;">
+    <!-- APPOINTMENTS LIST CARD -->
+    <div class="card">
+        <div class="card-header" style="flex-wrap: wrap; gap: 1rem;">
+            <div class="card-title">
+                <i class="fa-solid fa-clock-rotate-left" style="color: var(--primary);"></i> My Appointments Schedule
+            </div>
+            <div style="display: flex; gap: 8px;">
+                <button class="btn btn-sm btn-outline appointment-filter-btn active" data-filter="all">All</button>
+                <button class="btn btn-sm btn-outline appointment-filter-btn" data-filter="confirmed">Confirmed</button>
+                <button class="btn btn-sm btn-outline appointment-filter-btn" data-filter="pending">Pending</button>
+                <a href="{{ url_for('view_appointments') }}" class="btn btn-sm btn-outline">Full View</a>
+            </div>
+        </div>
+
+        {% if appointments %}
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Appt ID</th>
+                            <th>Doctor & Field</th>
+                            <th>Date & Time</th>
+                            <th>Status</th>
+                            <th>Reason</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for appt in appointments %}
+                            <tr class="appointment-row" data-status="{{ appt.status.lower() }}">
+                                <td><strong class="font-mono">{{ appt.appointment_id }}</strong></td>
+                                <td>
+                                    <div style="font-weight: 700; color: var(--text-main);">{{ appt.doctor_name }}</div>
+                                    <div style="font-size: 0.8rem; color: var(--primary-dark); font-weight: 600;">{{ appt.specialization }}</div>
+                                </td>
+                                <td>
+                                    <div><i class="fa-regular fa-calendar" style="color: var(--primary);"></i> {{ appt.date }}</div>
+                                    <div style="font-size: 0.8rem; color: var(--text-muted);"><i class="fa-regular fa-clock"></i> {{ appt.time }}</div>
+                                </td>
+                                <td>
+                                    <span class="status-badge status-{{ appt.status }}">
+                                        <i class="fa-solid fa-circle" style="font-size: 0.45rem;"></i> {{ appt.status }}
+                                    </span>
+                                </td>
+                                <td style="font-size: 0.88rem; color: var(--text-muted);">{{ appt.reason }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div style="text-align: center; padding: 2.5rem; color: var(--text-muted);">
+                <i class="fa-solid fa-calendar-xmark" style="font-size: 2.5rem; color: #cbd5e1; margin-bottom: 1rem;"></i>
+                <p>No appointments scheduled yet.</p>
+                <a href="{{ url_for('booking_page') }}" class="btn btn-sm btn-primary" style="margin-top: 0.85rem;">Schedule Consultation</a>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- PATIENT VITAL PROFILE & QUICK ACTIONS -->
+    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title" style="font-size: 1.15rem;">
+                    <i class="fa-solid fa-id-card" style="color: var(--primary);"></i> Health Passport
+                </div>
+            </div>
+            {% if patient %}
+                <div style="display: flex; flex-direction: column; gap: 0.85rem; font-size: 0.92rem;">
+                    <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed var(--border-color); padding-bottom: 6px;">
+                        <span style="color: var(--text-muted);">Patient ID:</span>
+                        <code style="color: var(--primary-dark); font-weight: 700;">{{ patient.patient_id }}</code>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed var(--border-color); padding-bottom: 6px;">
+                        <span style="color: var(--text-muted);">Age / Gender:</span>
+                        <strong style="color: var(--text-main);">{{ patient.age }} Yrs / {{ patient.gender }}</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed var(--border-color); padding-bottom: 6px;">
+                        <span style="color: var(--text-muted);">Blood Group:</span>
+                        <span style="background: #fee2e2; color: #991b1b; padding: 2px 10px; border-radius: 12px; font-weight: 800; font-size: 0.82rem;">{{ patient.blood_group }}</span>
+                    </div>
+                    <div>
+                        <span style="color: var(--text-muted); display: block; margin-bottom: 4px;">Medical History Summary:</span>
+                        <div style="background: #f8fafc; padding: 0.85rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color); font-size: 0.85rem; color: var(--text-main); line-height: 1.5;">
+                            {{ patient.medical_history }}
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <p style="color: var(--text-muted); font-size: 0.9rem;">Patient profile synced with AWS EC2 backend.</p>
+            {% endif %}
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title" style="font-size: 1.15rem;">
+                    <i class="fa-solid fa-bolt" style="color: #f59e0b;"></i> Portal Quick Actions
+                </div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <a href="{{ url_for('booking_page') }}" class="btn btn-outline" style="justify-content: flex-start;">
+                    <i class="fa-solid fa-calendar-plus" style="color: var(--primary);"></i> Book Doctor Consultation
+                </a>
+                <a href="{{ url_for('medical_history') }}" class="btn btn-outline" style="justify-content: flex-start;">
+                    <i class="fa-solid fa-file-medical" style="color: var(--primary);"></i> Review Medical Diagnosis
+                </a>
+                <a href="{{ url_for('view_user_notifications') }}" class="btn btn-outline" style="justify-content: flex-start;">
+                    <i class="fa-solid fa-bell" style="color: var(--primary);"></i> View AWS SNS Notifications
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

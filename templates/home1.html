@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}MedTrack Dashboard{% endblock %}
+
+{% block content %}
+<div class="card" style="padding: 2.5rem; text-align: center;">
+    <div class="brand-icon" style="margin: 0 auto 1.5rem; width: 60px; height: 60px; font-size: 1.8rem;">
+        <i class="fa-solid fa-gauge-high"></i>
+    </div>
+    <h1 style="font-size: 1.8rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.5rem;">
+        Welcome to MedTrack Platform, {{ user.name }}!
+    </h1>
+    <p style="color: var(--text-muted); max-width: 600px; margin: 0 auto 1.5rem;">
+        You are currently logged in as <span class="role-badge role-{{ user.role }}">{{ user.role }}</span>.
+    </p>
+
+    <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+        {% if user.role == 'Patient' %}
+            <a href="{{ url_for('patient_dashboard') }}" class="btn btn-primary"><i class="fa-solid fa-hospital-user"></i> Open Patient Portal</a>
+            <a href="{{ url_for('booking_page') }}" class="btn btn-secondary"><i class="fa-solid fa-calendar-plus"></i> Book Consultation</a>
+        {% elif user.role == 'Doctor' %}
+            <a href="{{ url_for('doctor_dashboard') }}" class="btn btn-primary"><i class="fa-solid fa-user-doctor"></i> Open Doctor Workspace</a>
+            <a href="{{ url_for('submit_diagnosis') }}" class="btn btn-secondary"><i class="fa-solid fa-file-signature"></i> Submit Diagnosis</a>
+        {% elif user.role == 'Admin' %}
+            <a href="{{ url_for('admin_dashboard') }}" class="btn btn-primary"><i class="fa-solid fa-user-shield"></i> Open Admin Control Center</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

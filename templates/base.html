@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}MedTrack - Smart Cloud Healthcare System{% endblock %}</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+    <!-- FontAwesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <!-- TOP CLOUD TICKER BAR -->
+    <div class="cloud-status-bar">
+        <div class="cloud-ticker-items">
+            <div class="cloud-ticker-item">
+                <span class="pulse-dot"></span>
+                <span>AWS EC2 Core: <strong style="color: #5eead4;">Online (us-east-1)</strong></span>
+            </div>
+            <div class="cloud-ticker-item">
+                <i class="fa-solid fa-database" style="color: #06b6d4;"></i>
+                <span>DynamoDB Table Status: <strong style="color: #ffffff;">ACTIVE</strong></span>
+            </div>
+            <div class="cloud-ticker-item">
+                <i class="fa-solid fa-shield-halved" style="color: #6366f1;"></i>
+                <span>IAM RBAC: <strong style="color: #ffffff;">Enforced</strong></span>
+            </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <span><i class="fa-regular fa-clock" style="color: #06b6d4;"></i> <span id="live-clock">--:--:--</span></span>
+            <span style="background: rgba(255,255,255,0.1); padding: 2px 8px; border-radius: 10px;">v2.5 Cloud Pro</span>
+        </div>
+    </div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="{{ url_for('index') }}" class="brand">
+                <div class="brand-icon">
+                    <i class="fa-solid fa-heart-pulse"></i>
+                </div>
+                <span>MedTrack</span>
+                <span class="brand-badge">Cloud Edition</span>
+            </a>
+
+            <ul class="nav-links">
+                <li><a href="{{ url_for('index') }}" class="{% if request.endpoint == 'index' %}active{% endif %}"><i class="fa-solid fa-house"></i> Home</a></li>
+                <li><a href="{{ url_for('about') }}" class="{% if request.endpoint == 'about' %}active{% endif %}"><i class="fa-solid fa-circle-info"></i> About</a></li>
+                <li><a href="{{ url_for('contact') }}" class="{% if request.endpoint == 'contact' %}active{% endif %}"><i class="fa-solid fa-envelope"></i> Contact</a></li>
+
+                {% if session.get('user') %}
+                    <li><a href="{{ url_for('home1') }}" class="{% if request.endpoint in ['home1', 'patient_dashboard', 'doctor_dashboard', 'admin_dashboard'] %}active{% endif %}"><i class="fa-solid fa-gauge-high"></i> Dashboard</a></li>
+                    <li><a href="{{ url_for('view_appointments') }}" class="{% if request.endpoint == 'view_appointments' %}active{% endif %}"><i class="fa-solid fa-calendar-check"></i> Appointments</a></li>
+                    <li><a href="{{ url_for('medical_history') }}" class="{% if request.endpoint == 'medical_history' %}active{% endif %}"><i class="fa-solid fa-file-medical"></i> Records</a></li>
+                    <li><a href="{{ url_for('view_user_notifications') }}" class="{% if request.endpoint == 'view_user_notifications' %}active{% endif %}"><i class="fa-solid fa-bell"></i> Alerts</a></li>
+                {% endif %}
+            </ul>
+
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                {% if session.get('user') %}
+                    <div class="nav-user">
+                        <i class="fa-solid fa-user-doctor" style="font-size: 1.1rem; color: #5eead4;"></i>
+                        <span style="font-weight: 700; font-size: 0.9rem;">{{ session['user']['name'] }}</span>
+                        <span class="role-badge role-{{ session['user']['role'] }}">{{ session['user']['role'] }}</span>
+                    </div>
+                    <a href="{{ url_for('logout') }}" class="btn btn-sm btn-outline" style="border-color: rgba(255,255,255,0.25); color: white;">
+                        <i class="fa-solid fa-right-from-bracket"></i> Exit
+                    </a>
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="btn btn-sm btn-secondary"><i class="fa-solid fa-right-to-bracket"></i> Log In</a>
+                    <a href="{{ url_for('signup') }}" class="btn btn-sm btn-nav-login"><i class="fa-solid fa-user-plus"></i> Register</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- FLASH MESSAGES -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-container">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        <div>
+                            {% if category == 'success' %}
+                                <i class="fa-solid fa-circle-check" style="margin-right: 8px;"></i>
+                            {% elif category == 'danger' %}
+                                <i class="fa-solid fa-circle-exclamation" style="margin-right: 8px;"></i>
+                            {% else %}
+                                <i class="fa-solid fa-info-circle" style="margin-right: 8px;"></i>
+                            {% endif %}
+                            {{ message }}
+                        </div>
+                        <button class="close-alert">&times;</button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div>
+                <div class="footer-brand">
+                    <div class="brand-icon" style="width: 34px; height: 34px; font-size: 1rem;">
+                        <i class="fa-solid fa-heart-pulse"></i>
+                    </div>
+                    <span>MedTrack Cloud</span>
+                </div>
+                <p class="footer-text">
+                    Enterprise-grade cloud healthcare platform with instant appointment scheduling, diagnosis tracking, role-based security, and real-time AWS SNS notifications.
+                </p>
+            </div>
+            <div>
+                <h4 class="footer-title">Platform Features</h4>
+                <ul class="footer-links">
+                    <li><a href="{{ url_for('booking_page') }}"><i class="fa-solid fa-chevron-right" style="font-size: 0.7rem; color: var(--primary);"></i> Appointment Booking</a></li>
+                    <li><a href="{{ url_for('medical_history') }}"><i class="fa-solid fa-chevron-right" style="font-size: 0.7rem; color: var(--primary);"></i> Medical Diagnosis Records</a></li>
+                    <li><a href="{{ url_for('view_user_notifications') }}"><i class="fa-solid fa-chevron-right" style="font-size: 0.7rem; color: var(--primary);"></i> AWS SNS Live Alerts</a></li>
+                    <li><a href="{{ url_for('about') }}"><i class="fa-solid fa-chevron-right" style="font-size: 0.7rem; color: var(--primary);"></i> IAM Security Specifications</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="footer-title">Cloud Technology Stack</h4>
+                <ul class="footer-links">
+                    <li><a href="#"><i class="fa-brands fa-python" style="color: #38bdf8;"></i> Flask Web Framework</a></li>
+                    <li><a href="#"><i class="fa-brands fa-aws" style="color: #f97316;"></i> AWS EC2 & Nginx Server</a></li>
+                    <li><a href="#"><i class="fa-solid fa-database" style="color: #a855f7;"></i> Amazon DynamoDB Storage</a></li>
+                    <li><a href="#"><i class="fa-solid fa-shield-halved" style="color: #10b981;"></i> AWS IAM Access Policies</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div>&copy; 2026 MedTrack Cloud Healthcare System. Built with Flask & AWS Cloud Services.</div>
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <span class="pulse-dot"></span>
+                <span style="color: #10b981; font-weight: 700;">AWS Cloud Infrastructure Healthy</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Custom JS -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

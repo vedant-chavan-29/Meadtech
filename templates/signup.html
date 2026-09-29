@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Account - MedTrack Cloud Healthcare Platform{% endblock %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 2rem auto;">
+    <div class="card" style="padding: 2.25rem;">
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <div class="brand-icon" style="margin: 0 auto 1rem; width: 48px; height: 48px; font-size: 1.4rem;">
+                <i class="fa-solid fa-user-plus"></i>
+            </div>
+            <h2 style="font-size: 1.6rem; font-weight: 800; color: var(--text-main);">Join MedTrack Platform</h2>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.25rem;">
+                Register as a Patient or Healthcare Practitioner
+            </p>
+        </div>
+
+        <form action="{{ url_for('signup') }}" method="POST">
+            <div class="form-group">
+                <label for="name" class="form-label"><i class="fa-solid fa-user" style="color: var(--primary);"></i> Full Name</label>
+                <input type="text" id="name" name="name" class="form-control" placeholder="e.g. Kusuma Sharma" required>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label for="email" class="form-label"><i class="fa-solid fa-envelope" style="color: var(--primary);"></i> Email Address</label>
+                    <input type="email" id="email" name="email" class="form-control" placeholder="xyz@gmail.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone" class="form-label"><i class="fa-solid fa-phone" style="color: var(--primary);"></i> Phone Number</label>
+                    <input type="text" id="phone" name="phone" class="form-control" placeholder="+1 (555) 000-0000" required>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label for="role" class="form-label"><i class="fa-solid fa-id-badge" style="color: var(--primary);"></i> Account Role</label>
+                    <select id="role" name="role" class="form-control" onchange="toggleRoleFields(this.value)" required>
+                        <option value="Patient" selected>Patient</option>
+                        <option value="Doctor">Doctor / Practitioner</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="form-label"><i class="fa-solid fa-lock" style="color: var(--primary);"></i> Password</label>
+                    <input type="password" id="password" name="password" class="form-control" placeholder="••••••••" required>
+                </div>
+            </div>
+
+            <!-- PATIENT SPECIFIC FIELDS -->
+            <div id="patient-fields" style="background: #f8fafc; border: 1px solid var(--border-color); padding: 1.25rem; border-radius: var(--radius-md); margin-bottom: 1.25rem;">
+                <h4 style="font-size: 0.9rem; font-weight: 700; color: var(--text-main); margin-bottom: 0.75rem;">
+                    <i class="fa-solid fa-hospital-user" style="color: var(--primary);"></i> Patient Profile Information
+                </h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div>
+                        <label class="form-label">Age</label>
+                        <input type="number" name="age" class="form-control" placeholder="28" value="28">
+                    </div>
+                    <div>
+                        <label class="form-label">Gender</label>
+                        <select name="gender" class="form-control">
+                            <option value="Female">Female</option>
+                            <option value="Male">Male</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="form-label">Blood Group</label>
+                        <input type="text" name="blood_group" class="form-control" placeholder="A+" value="A+">
+                    </div>
+                </div>
+                <div>
+                    <label class="form-label">Initial Medical History / Allergies</label>
+                    <textarea name="medical_history" class="form-control" placeholder="Mention any known conditions, allergies or past surgeries..."></textarea>
+                </div>
+            </div>
+
+            <!-- DOCTOR SPECIFIC FIELDS -->
+            <div id="doctor-fields" style="display: none; background: #f0fdf4; border: 1px solid #bbf7d0; padding: 1.25rem; border-radius: var(--radius-md); margin-bottom: 1.25rem;">
+                <h4 style="font-size: 0.9rem; font-weight: 700; color: #166534; margin-bottom: 0.75rem;">
+                    <i class="fa-solid fa-user-doctor"></i> Doctor Credentials
+                </h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div>
+                        <label class="form-label">Specialization</label>
+                        <input type="text" name="specialization" class="form-control" placeholder="e.g. Cardiology, Orthopedics">
+                    </div>
+                    <div>
+                        <label class="form-label">Years of Experience</label>
+                        <input type="text" name="experience" class="form-control" placeholder="e.g. 10 Years">
+                    </div>
+                </div>
+                <div>
+                    <label class="form-label">Professional Bio & Qualifications</label>
+                    <textarea name="bio" class="form-control" placeholder="Short description of experience and clinical focus..."></textarea>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.85rem; font-size: 1rem;">
+                <i class="fa-solid fa-user-check"></i> Complete Registration
+            </button>
+        </form>
+
+        <div style="margin-top: 1.75rem; padding-top: 1.25rem; border-top: 1px solid var(--border-color); text-align: center; font-size: 0.9rem;">
+            Already have an account? <a href="{{ url_for('login') }}" style="color: var(--primary); font-weight: 700;">Log In Here</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function toggleRoleFields(role) {
+    const patientFields = document.getElementById('patient-fields');
+    const doctorFields = document.getElementById('doctor-fields');
+    if (role === 'Doctor') {
+        patientFields.style.display = 'none';
+        doctorFields.style.display = 'block';
+    } else {
+        patientFields.style.display = 'block';
+        doctorFields.style.display = 'none';
+    }
+}
+</script>
+{% endblock %}

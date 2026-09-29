@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block title %}Book Consultation - MedTrack Cloud Platform{% endblock %}
+
+{% block content %}
+<div style="max-width: 680px; margin: 1.5rem auto;">
+    <div class="card" style="padding: 2.5rem; box-shadow: var(--shadow-lg);">
+        <div style="margin-bottom: 2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1.25rem;">
+            <div style="display: flex; align-items: center; gap: 14px;">
+                <div class="brand-icon" style="width: 48px; height: 48px; font-size: 1.3rem;">
+                    <i class="fa-solid fa-calendar-plus"></i>
+                </div>
+                <div>
+                    <h1 style="font-size: 1.6rem; font-weight: 800; color: var(--text-main); letter-spacing: -0.4px;">Schedule Doctor Consultation</h1>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 2px;">
+                        Book an appointment with instant AWS DynamoDB synchronization
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <form action="{{ url_for('booking_page') }}" method="POST">
+            <!-- DOCTOR SELECTION -->
+            <div class="form-group">
+                <label for="doctor_id" class="form-label">
+                    <i class="fa-solid fa-user-doctor" style="color: var(--primary);"></i> Select Specialist Doctor
+                </label>
+                <select id="doctor_id" name="doctor_id" class="form-control" onchange="updateDocInfo(this)" required style="height: 48px;">
+                    <option value="" disabled {{ 'selected' if not selected_doctor else '' }}>-- Choose Specialist Doctor --</option>
+                    {% for doc in doctors %}
+                        <option value="{{ doc.doctor_id }}"
+                                data-spec="{{ doc.specialization }}"
+                                data-exp="{{ doc.experience }}"
+                                data-avail="{{ doc.availability }}"
+                                {{ 'selected' if selected_doctor and selected_doctor.doctor_id == doc.doctor_id else '' }}>
+                            {{ doc.name }} — {{ doc.specialization }} ({{ doc.experience }})
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- SELECTED DOCTOR PREVIEW CARD -->
+            <div id="doc-preview" style="background: linear-gradient(135deg, var(--primary-light), #e0f2fe); border: 1px solid rgba(13, 148, 136, 0.3); border-radius: var(--radius-md); padding: 1.15rem; margin-bottom: 1.5rem; font-size: 0.9rem; box-shadow: var(--shadow-sm);">
+                <div style="font-weight: 800; color: var(--primary-dark); font-size: 1.05rem;" id="preview-name">
+                    <i class="fa-solid fa-circle-info" style="margin-right: 6px;"></i>
+                    {{ selected_doctor.name if selected_doctor else 'Select a doctor above to inspect availability' }}
+                </div>
+                <div style="color: var(--text-main); margin-top: 4px; font-weight: 600;" id="preview-spec">
+                    Specialization: {{ selected_doctor.specialization if selected_doctor else '-' }}
+                </div>
+                <div style="color: var(--text-muted); font-size: 0.85rem; margin-top: 2px;" id="preview-avail">
+                    Schedule: {{ selected_doctor.availability if selected_doctor else '-' }}
+                </div>
+            </div>
+
+            <!-- DATE & TIME -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+                <div class="form-group">
+                    <label for="date" class="form-label"><i class="fa-regular fa-calendar" style="color: var(--primary);"></i> Consultation Date</label>
+                    <input type="date" id="date" name="date" class="form-control" required style="height: 48px;">
+                </div>
+
+                <div class="form-group">
+                    <label for="time" class="form-label"><i class="fa-regular fa-clock" style="color: var(--primary);"></i> Preferred Time Slot</label>
+                    <select id="time" name="time" class="form-control" required style="height: 48px;">
+                        <option value="09:00 AM">09:00 AM Slot</option>
+                        <option value="10:30 AM" selected>10:30 AM Slot</option>
+                        <option value="01:30 PM">01:30 PM Slot</option>
+                        <option value="03:00 PM">03:00 PM Slot</option>
+                        <option value="04:30 PM">04:30 PM Slot</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- REASON / SYMPTOMS -->
+            <div class="form-group">
+                <label for="reason" class="form-label"><i class="fa-solid fa-file-lines" style="color: var(--primary);"></i> Consultation Reason / Main Symptoms</label>
+                <textarea id="reason" name="reason" class="form-control" placeholder="Describe your current symptoms or reason for scheduling (e.g. Heart rate checkup, headache evaluation, prescription renewal)..." required style="min-height: 120px;"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.95rem; font-size: 1.05rem; border-radius: var(--radius-md);">
+                <i class="fa-solid fa-paper-plane"></i> Confirm & Submit Consultation Request
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const dateInput = document.getElementById('date');
+    if (dateInput && !dateInput.value) {
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        dateInput.value = tomorrow.toISOString().split('T')[0];
+    }
+});
+
+function updateDocInfo(selectEl) {
+    const opt = selectEl.options[selectEl.selectedIndex];
+    document.getElementById('preview-name').innerHTML = '<i class="fa-solid fa-user-doctor" style="margin-right: 6px;"></i> ' + opt.text;
+    document.getElementById('preview-spec').textContent = 'Specialization: ' + opt.getAttribute('data-spec') + ' (' + opt.getAttribute('data-exp') + ')';
+    document.getElementById('preview-avail').textContent = 'Schedule: ' + opt.getAttribute('data-avail');
+}
+</script>
+{% endblock %}

@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+
+{% block title %}MedTrack - Next-Gen Cloud Healthcare Platform{% endblock %}
+
+{% block content %}
+<!-- HERO BANNER SECTION -->
+<div class="hero">
+    <div class="hero-chip">
+        <i class="fa-brands fa-aws" style="font-size: 1rem; color: #f97316;"></i>
+        <span>AWS Cloud Architecture & Flask Integration</span>
+    </div>
+    <h1 class="hero-title">Cloud-Powered Healthcare Management for Modern Clinics</h1>
+    <p class="hero-subtitle">
+        Seamlessly connect patients with specialist doctors, manage digital medical records, and trigger automated alerts using high-performance AWS infrastructure, Flask, and DynamoDB.
+    </p>
+    <div class="hero-actions">
+        {% if session.get('user') %}
+            <a href="{{ url_for('home1') }}" class="btn btn-primary"><i class="fa-solid fa-gauge-high"></i> Go to Dashboard</a>
+            <a href="{{ url_for('booking_page') }}" class="btn btn-secondary"><i class="fa-solid fa-calendar-plus"></i> Book Consultation Now</a>
+        {% else %}
+            <a href="{{ url_for('signup') }}" class="btn btn-primary"><i class="fa-solid fa-user-plus"></i> Get Started Free</a>
+            <a href="{{ url_for('login') }}" class="btn btn-secondary"><i class="fa-solid fa-right-to-bracket"></i> Sign In to Portal</a>
+        {% endif %}
+    </div>
+</div>
+
+<!-- STATS METRICS GRID -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon"><i class="fa-solid fa-user-doctor"></i></div>
+        <div>
+            <div class="stat-val" data-target="{{ total_doctors }}">{{ total_doctors }}</div>
+            <div class="stat-lbl">Board Specialist Doctors</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon" style="background: #e0f2fe; color: #0284c7;"><i class="fa-solid fa-hospital-user"></i></div>
+        <div>
+            <div class="stat-val" data-target="{{ total_patients }}">{{ total_patients }}</div>
+            <div class="stat-lbl">Registered Patients</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon" style="background: #fef3c7; color: #92400e;"><i class="fa-solid fa-calendar-check"></i></div>
+        <div>
+            <div class="stat-val" data-target="{{ total_appointments }}">{{ total_appointments }}</div>
+            <div class="stat-lbl">Appointments Scheduled</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon" style="background: #dcfce7; color: #166534;"><i class="fa-brands fa-aws"></i></div>
+        <div>
+            <div class="stat-val">99.99%</div>
+            <div class="stat-lbl">AWS DynamoDB Uptime</div>
+        </div>
+    </div>
+</div>
+
+<!-- ARCHITECTURE FEATURE GRID -->
+<div style="margin-bottom: 3.5rem;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+        <div>
+            <h2 style="font-size: 1.65rem; font-weight: 800; color: var(--text-main); letter-spacing: -0.3px;">
+                <i class="fa-solid fa-shield-heart" style="color: var(--primary);"></i> AWS Cloud Healthcare Architecture
+            </h2>
+            <p style="color: var(--text-muted); font-size: 0.95rem;">
+                Built strictly to specification for seamless scalability, least-privilege security, and rapid response.
+            </p>
+        </div>
+        <a href="{{ url_for('about') }}" class="btn btn-sm btn-outline"><i class="fa-solid fa-arrow-right"></i> Learn Specs</a>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+        <div class="card" style="border-top: 4px solid var(--secondary);">
+            <div class="stat-icon" style="margin-bottom: 1.25rem; background: #e0f2fe; color: #0284c7;">
+                <i class="fa-solid fa-calendar-days"></i>
+            </div>
+            <h3 style="font-size: 1.2rem; font-weight: 800; margin-bottom: 0.6rem; color: var(--text-main);">Scenario 1: Rapid Appointment Booking</h3>
+            <p style="color: var(--text-muted); font-size: 0.92rem; line-height: 1.6;">
+                Patients schedule appointments with instant confirmation. Flask routes handle form validation and session validation on high-performance EC2 instances.
+            </p>
+        </div>
+
+        <div class="card" style="border-top: 4px solid var(--primary);">
+            <div class="stat-icon" style="margin-bottom: 1.25rem; background: #dcfce7; color: #166534;">
+                <i class="fa-solid fa-user-shield"></i>
+            </div>
+            <h3 style="font-size: 1.2rem; font-weight: 800; margin-bottom: 0.6rem; color: var(--text-main);">Scenario 2: Granular IAM Access Control</h3>
+            <p style="color: var(--text-muted); font-size: 0.92rem; line-height: 1.6;">
+                Enforces role-based permissions (Patient, Doctor, Admin). IAM policies restrict medical record modification strictly to licensed doctors and admins.
+            </p>
+        </div>
+
+        <div class="card" style="border-top: 4px solid var(--accent);">
+            <div class="stat-icon" style="margin-bottom: 1.25rem; background: var(--accent-light); color: var(--accent);">
+                <i class="fa-solid fa-database"></i>
+            </div>
+            <h3 style="font-size: 1.2rem; font-weight: 800; margin-bottom: 0.6rem; color: var(--text-main);">Scenario 3: DynamoDB Diagnosis Storage</h3>
+            <p style="color: var(--text-muted); font-size: 0.92rem; line-height: 1.6;">
+                Doctor notes, prescriptions, and lab findings are securely stored and retrieved with millisecond latency via AWS DynamoDB table indexing.
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- FEATURED DOCTORS & LIVE SEARCH -->
+<div class="card">
+    <div class="card-header" style="flex-wrap: wrap; gap: 1rem;">
+        <div>
+            <div class="card-title">
+                <i class="fa-solid fa-stethoscope" style="color: var(--primary);"></i> Find Specialist Doctors
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 2px;">Search by doctor name or medical specialization</p>
+        </div>
+        
+        <div style="display: flex; gap: 1rem; align-items: center; width: 100%; max-width: 450px;">
+            <div class="search-box" style="flex: 1;">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="doctor-search-input" class="form-control" placeholder="Search doctor name or field...">
+            </div>
+            {% if session.get('user') %}
+                <a href="{{ url_for('booking_page') }}" class="btn btn-sm btn-primary" style="white-space: nowrap;">Book Visit</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;" id="doctors-container">
+        {% for doc in doctors %}
+            <div class="doctor-card" data-name="{{ doc.name.lower() }}" data-spec="{{ doc.specialization.lower() }}" style="border: 1px solid var(--border-color); padding: 1.5rem; border-radius: var(--radius-lg); background: #ffffff; transition: all 0.25s ease; box-shadow: var(--shadow-sm);">
+                <div style="display: flex; align-items: flex-start; gap: 14px; margin-bottom: 1rem;">
+                    <div style="width: 52px; height: 52px; background: linear-gradient(135deg, var(--primary-light), #e0f2fe); color: var(--primary-dark); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; font-weight: 800; box-shadow: 0 4px 10px rgba(13,148,136,0.15); flex-shrink: 0;">
+                        <i class="fa-solid fa-user-doctor"></i>
+                    </div>
+                    <div style="flex: 1;">
+                        <h4 style="font-weight: 800; font-size: 1.1rem; color: var(--text-main); line-height: 1.2;">{{ doc.name }}</h4>
+                        <div style="margin-top: 4px;">
+                            <span style="font-size: 0.78rem; font-weight: 700; color: var(--primary-dark); background: var(--primary-light); padding: 3px 10px; border-radius: 12px; display: inline-block;">
+                                {{ doc.specialization }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 12px; font-size: 0.82rem; color: var(--text-muted); margin-bottom: 0.85rem; background: #f8fafc; padding: 8px 12px; border-radius: var(--radius-sm);">
+                    <div><i class="fa-solid fa-briefcase" style="color: var(--primary);"></i> <strong>Exp:</strong> {{ doc.experience }}</div>
+                    <div><i class="fa-solid fa-star" style="color: #f59e0b;"></i> <strong>Rating:</strong> 4.9/5</div>
+                </div>
+
+                <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1.1rem; line-height: 1.5; min-height: 40px;">
+                    {{ doc.bio }}
+                </p>
+
+                <div style="font-size: 0.82rem; color: var(--text-main); font-weight: 600; margin-bottom: 1.25rem;">
+                    <i class="fa-regular fa-clock" style="color: var(--primary);"></i> Availability: <span style="color: var(--text-muted);">{{ doc.availability }}</span>
+                </div>
+
+                <div>
+                    <a href="{{ url_for('booking_page', doctor_id=doc.doctor_id) }}" class="btn btn-sm btn-primary" style="width: 100%;">
+                        <i class="fa-solid fa-calendar-plus"></i> Select & Book Consultation
+                    </a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

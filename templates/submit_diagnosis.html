@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block title %}Submit Diagnosis Report - MedTrack{% endblock %}
+
+{% block content %}
+<div style="max-width: 700px; margin: 1.5rem auto;">
+    <div class="card" style="padding: 2.25rem;">
+        <div style="margin-bottom: 2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div class="brand-icon" style="width: 44px; height: 44px; font-size: 1.2rem;">
+                    <i class="fa-solid fa-file-signature"></i>
+                </div>
+                <div>
+                    <h1 style="font-size: 1.5rem; font-weight: 800; color: var(--text-main);">Submit Clinical Diagnosis Report</h1>
+                    <p style="color: var(--text-muted); font-size: 0.88rem;">
+                        Record findings, symptoms, and medical prescription for patient records
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <form action="{{ url_for('submit_diagnosis') }}" method="POST">
+            <!-- APPOINTMENT SELECTION -->
+            <div class="form-group">
+                <label for="appointment_id" class="form-label">
+                    <i class="fa-solid fa-calendar-check" style="color: var(--primary);"></i> Select Patient Appointment
+                </label>
+                <select id="appointment_id" name="appointment_id" class="form-control" required>
+                    <option value="" disabled {{ 'selected' if not target_app_id else '' }}>-- Select Pending / Confirmed Appointment --</option>
+                    {% for appt in eligible_appointments %}
+                        <option value="{{ appt.appointment_id }}" {{ 'selected' if target_app_id == appt.appointment_id else '' }}>
+                            {{ appt.appointment_id }} - Patient: {{ appt.patient_name }} ({{ appt.date }} at {{ appt.time }})
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="report_title" class="form-label"><i class="fa-solid fa-heading" style="color: var(--primary);"></i> Report Title / Diagnosis Summary</label>
+                <input type="text" id="report_title" name="report_title" class="form-control" placeholder="e.g. ECG Normal - Baseline Healthy / Migraine Evaluation" required>
+            </div>
+
+            <div class="form-group">
+                <label for="symptoms" class="form-label"><i class="fa-solid fa-notes-medical" style="color: var(--primary);"></i> Observed Symptoms</label>
+                <textarea id="symptoms" name="symptoms" class="form-control" placeholder="Describe symptoms reported by patient during consultation..." required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="findings" class="form-label"><i class="fa-solid fa-stethoscope" style="color: var(--primary);"></i> Clinical Examination & Test Findings</label>
+                <textarea id="findings" name="findings" class="form-control" placeholder="Blood pressure, lab observations, ECG/Scan results..." required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="prescription" class="form-label"><i class="fa-solid fa-pills" style="color: var(--primary);"></i> Rx Prescription & Follow-up Instructions</label>
+                <textarea id="prescription" name="prescription" class="form-control" placeholder="Medications, dosage, diet recommendations and next follow-up date..." required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.85rem; font-size: 1rem;">
+                <i class="fa-solid fa-cloud-arrow-up"></i> Publish Diagnosis & Mark Appointment Complete
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

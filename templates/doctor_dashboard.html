@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+
+{% block title %}Doctor Clinical Workspace - MedTrack{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+    <div>
+        <h1 style="font-size: 1.9rem; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px;">
+            <i class="fa-solid fa-user-doctor" style="color: var(--primary);"></i> Clinical Workspace
+        </h1>
+        <p style="color: var(--text-muted); font-size: 0.95rem;">
+            Welcome back, <strong>{{ doctor.name if doctor else user.name }}</strong>! {{ doctor.specialization if doctor else 'Practitioner' }}
+        </p>
+    </div>
+    <a href="{{ url_for('submit_diagnosis') }}" class="btn btn-primary">
+        <i class="fa-solid fa-file-signature"></i> Publish Diagnosis Report
+    </a>
+</div>
+
+<!-- DOCTOR STATS GRID -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon"><i class="fa-solid fa-calendar-check"></i></div>
+        <div>
+            <div class="stat-val">{{ appointments|length }}</div>
+            <div class="stat-lbl">Assigned Consultations</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon" style="background: #fef3c7; color: #92400e;"><i class="fa-solid fa-clock"></i></div>
+        <div>
+            <div class="stat-val">{{ appointments|selectattr('status', 'equalto', 'Pending')|list|length }}</div>
+            <div class="stat-lbl">Awaiting Confirmation</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon" style="background: #dcfce7; color: #166534;"><i class="fa-solid fa-file-waveform"></i></div>
+        <div>
+            <div class="stat-val">{{ diagnoses|length }}</div>
+            <div class="stat-lbl">DynamoDB Diagnoses</div>
+        </div>
+    </div>
+</div>
+
+<!-- CLINICAL PATIENT MANAGEMENT -->
+<div class="card">
+    <div class="card-header" style="flex-wrap: wrap; gap: 1rem;">
+        <div class="card-title">
+            <i class="fa-solid fa-list-check" style="color: var(--primary);"></i> Patient Consultations Management
+        </div>
+        <div style="display: flex; gap: 1rem; align-items: center;">
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="appointment-table-search" class="form-control" placeholder="Search patient name or ID...">
+            </div>
+            <a href="{{ url_for('view_appointments') }}" class="btn btn-sm btn-outline">Full Schedule</a>
+        </div>
+    </div>
+
+    {% if appointments %}
+        <div class="table-responsive">
+            <table class="table" id="doctor-appointments-table">
+                <thead>
+                    <tr>
+                        <th>Booking ID</th>
+                        <th>Patient Details</th>
+                        <th>Date & Time</th>
+                        <th>Chief Complaint / Symptoms</th>
+                        <th>Status</th>
+                        <th>Clinical Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for appt in appointments %}
+                        <tr class="appointment-row" data-status="{{ appt.status.lower() }}">
+                            <td><strong class="font-mono">{{ appt.appointment_id }}</strong></td>
+                            <td>
+                                <div style="font-weight: 700; color: var(--text-main);">{{ appt.patient_name }}</div>
+                                <div style="font-size: 0.78rem; color: var(--text-muted);">Patient ID: <span class="font-mono">{{ appt.patient_id }}</span></div>
+                            </td>
+                            <td>
+                                <div><i class="fa-regular fa-calendar" style="color: var(--primary);"></i> {{ appt.date }}</div>
+                                <div style="font-size: 0.8rem; color: var(--text-muted);"><i class="fa-regular fa-clock"></i> {{ appt.time }}</div>
+                            </td>
+                            <td style="font-size: 0.88rem; color: var(--text-muted); max-width: 220px;">{{ appt.reason }}</td>
+                            <td>
+                                <span class="status-badge status-{{ appt.status }}">
+                                    <i class="fa-solid fa-circle" style="font-size: 0.45rem;"></i> {{ appt.status }}
+                                </span>
+                            </td>
+                            <td>
+                                <div style="display: flex; gap: 8px;">
+                                    {% if appt.status == 'Pending' %}
+                                        <form action="{{ url_for('update_appointment_status', booking_id=appt.booking_id) }}" method="POST" style="display:inline;">
+                                            <input type="hidden" name="status" value="Confirmed">
+                                            <button type="submit" class="btn btn-sm btn-primary" title="Confirm Booking">
+                                                <i class="fa-solid fa-check"></i> Accept
+                                            </button>
+                                        </form>
+                                    {% endif %}
+
+                                    {% if appt.status in ['Confirmed', 'Pending'] %}
+                                        <a href="{{ url_for('submit_diagnosis', appointment_id=appt.appointment_id) }}" class="btn btn-sm btn-outline" style="background: #e0f2fe; color: #0369a1; border-color: #bae6fd;">
+                                            <i class="fa-solid fa-stethoscope"></i> Diagnose
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div style="text-align: center; padding: 2.5rem; color: var(--text-muted);">
+            <i class="fa-solid fa-calendar-check" style="font-size: 2.5rem; color: #cbd5e1; margin-bottom: 1rem;"></i>
+            <p>No appointments currently scheduled in your queue.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
