@@ -11,7 +11,7 @@
 **A full-stack, cloud-ready healthcare management platform built with Python Flask.**  
 Enables patients, doctors, and administrators to seamlessly manage appointments, diagnoses, and medical records — architected for AWS DynamoDB & SNS integration in Phase 2.
 
-[🌐 Live Demo](https://meadtech3.netlify.app) • [📂 Repository](https://github.com/vedant-chavan-29/MeadTech)
+[📂 Repository](https://github.com/vedant-chavan-29/MeadTech)
 
 </div>
 
